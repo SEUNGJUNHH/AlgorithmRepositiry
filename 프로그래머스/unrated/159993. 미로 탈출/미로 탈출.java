@@ -2,69 +2,64 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 class Solution {
-    class XY{
-        int x;
-        int y;
-        int distance;
-        public XY(int x, int y, int distance) {
-            this.x = x;
-            this.y = y;
-            this.distance = distance;
+       // 좌표를 위한 클래스 생성
+        class XY{
+            int x;
+            int y;
+            int distance;
+            public XY(int x, int y, int distance) {
+                this.x = x;
+                this.y = y;
+                this.distance = distance;
+            }
         }
-    }
-    static char[][] cosmap;
-    static boolean[][] check;
-    static int[] movex ={0,1,-1,0};
-    static int[] movey = {-1, 0, 0, 1};
+
+        static boolean[][] check;
+        static char[][] mymap;
+        static int[] xnum = {1,-1,0,0};
+        static int[] ynum = {0, 0, 1, -1};
 
     public int solution(String[] maps) {
         int answer = 0;
-        cosmap=new char[maps.length][maps[0].length()];
+        mymap = new char[maps.length][maps[0].length()];
         check = new boolean[maps.length][maps[0].length()];
-        XY start = null;
-        XY lever = null;
-        XY end = null;
-        //시작점, 종료지점, 레버위치 설정 후 String 배열 2차원 char배열로 변경
+        XY startXy = null;
+        XY endXY = null;
+        XY leverXY = null;
         for (int i = 0; i < maps.length; i++) {
             for (int j = 0; j < maps[i].length(); j++) {
-                if(maps[i].charAt(j)=='S') start=new XY(i,j,0);
-                else if (maps[i].charAt(j)=='L') lever = new XY(i, j, 0);
-                else if (maps[i].charAt(j)=='E') end = new XY(i, j, 0);
-                 cosmap[i][j] = maps[i].charAt(j);
-                    System.out.print(cosmap[i][j]);
+                if(maps[i].charAt(j)=='L') leverXY = new XY(i, j, 0);
+                else if (maps[i].charAt(j)=='S') startXy = new XY(i, j, 0);
+                else if(maps[i].charAt(j)=='E') endXY = new XY(i, j, 0);
+                mymap[i][j] = maps[i].charAt(j);
             }
         }
-            //레버부터 찾기
-            XY bfs = bfs(start.x, start.y, lever.x, lever.y, cosmap.length, cosmap[0].length);
-            if(bfs==null) {answer= -1; return answer;}
-            check = new boolean[cosmap.length][cosmap[0].length]; //전역변수임으로 여기서 초기화
-            XY bfs1 = bfs(bfs.x, bfs.y, end.x, end.y, cosmap.length, cosmap[0].length);
-            if(bfs1==null){answer= -1; return answer;}
-            answer = bfs.distance+bfs1.distance;
-
-        return answer;
+        XY bfs = bfs(startXy, leverXY, maps.length, maps[0].length());
+        if(bfs==null){return -1;}
+        check = new boolean[maps.length][maps[0].length()];
+        XY bfs1 = bfs(bfs, endXY, maps.length, maps[0].length());
+        if(bfs1==null){return -1;}
+        return bfs1.distance;
     }
 
-    private XY bfs(int startX,int startY,int endX,int endY,int row, int column) {
+    private XY bfs(XY start, XY end ,int row, int column) {
         Queue<XY> q = new LinkedList<>();
-        q.add(new XY(startX, startY, 0));
-
-        while (!q.isEmpty()) {
+        q.add(start);
+        check[start.x][start.y] =true;
+        while(!q.isEmpty()){
             XY now = q.poll();
             check[now.x][now.y]=true;
-            if(now.x==endX&&now.y==endY)
-                return now;
+            if(now.x== end.x&&now.y== end.y) return now;
             for (int i = 0; i < 4; i++) {
-                int currX = now.x + movex[i];
-                int currY = now.y + movey[i];
-                if(currY<0||currY>=column||currX<0||currX>=row) continue;
-                if(!check[currX][currY]&&cosmap[currX][currY]!='X'){
-                    q.add(new XY(currX,currY, now.distance+1));
-                    check[currX][currY]=true;
+               int nowx = now.x+xnum[i];
+               int nowy = now.y + ynum[i];
+                if(nowx<0||nowy<0||nowx>=row||nowy>=column) continue;
+                if(!check[nowx][nowy]&&mymap[nowx][nowy]!='X'){
+                    q.add(new XY(nowx,nowy,now.distance+1));
+                    check[nowx][nowy] = true;
                 }
             }
         }
-
         return null;
-        }
     }
+}
