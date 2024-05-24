@@ -1,28 +1,26 @@
 import java.util.Arrays;
 
 class Solution {
-    int[] numbers;
-    int target;
+    int[] number;
+    int targets;
     int answer;
-    public void bfs(int depth, int sum){
-        //조건
-        if(numbers.length==depth){
-            if(sum==target)
+    public void rec(int depth, int sum){
+        if(depth == number.length){
+            if(sum==targets)
                 answer++;
             return;
         }
-
-        //수행
-        depth+=1;
-        bfs(depth,sum+numbers[depth-1]);
-        bfs(depth,sum-numbers[depth-1]);
+        depth++;
+        rec(depth,sum+number[depth-1]);
+        rec(depth,sum-number[depth-1]);
+        
     }
     
     public int solution(int[] numbers, int target) {
-        this.numbers = numbers;
-        this.target = target;
-        
-        bfs(0,0);
+        answer = 0;
+        number = numbers;
+        targets = target;
+        rec(0,0);
         return answer;
     }
 
