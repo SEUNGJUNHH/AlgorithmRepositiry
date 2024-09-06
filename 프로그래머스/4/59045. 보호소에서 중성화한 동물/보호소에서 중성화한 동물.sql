@@ -1,0 +1,4 @@
+-- 코드를 입력하세요
+SELECT a.ANIMAL_ID, a.ANIMAL_TYPE, a.NAME
+from ANIMAL_INS as a join ANIMAL_OUTS as b using(ANIMAL_ID)
+where NOT(a.SEX_UPON_INTAKE = b.SEX_UPON_OUTCOME)
